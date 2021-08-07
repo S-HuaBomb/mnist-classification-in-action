@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     print(model)
 
-    train_test = TrainTest(model)
+    train_test = TrainTest(model, dataset='mnist')
 
     s = time.time()
 
