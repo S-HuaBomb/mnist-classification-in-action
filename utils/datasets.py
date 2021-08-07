@@ -34,11 +34,11 @@ def mnist(batch_size=64):
     train_set = datasets.MNIST(root=os.path.join(data_root, "mnist"),
                                 train=True,
                                 transform=data_transforms["mnist"],  # 原始是 PIL Image 格式
-                                download=False)
+                                download=True)
     test_set = datasets.MNIST(root=os.path.join(data_root, "mnist"),
                                train=False,
                                transform=data_transforms["mnist"],
-                               download=False)
+                               download=True)
 
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=True)
@@ -60,11 +60,11 @@ def cifar10(batch_size=64):
     train_set = datasets.CIFAR10(root=os.path.join(data_root, "cifar-10"),
                                  train=True,
                                  transform=data_transforms["cifar10"],  # 原始是 PIL Image 格式
-                                 download=False)
+                                 download=True)
     test_set = datasets.CIFAR10(root=os.path.join(data_root, "cifar-10"),
                                 train=False,
                                 transform=data_transforms["cifar10"],
-                                download=False)
+                                download=True)
 
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=True)
