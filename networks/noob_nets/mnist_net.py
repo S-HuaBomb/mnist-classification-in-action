@@ -16,11 +16,11 @@ trans = transforms.Compose([
     transforms.Normalize((0.1307,), (0.3081,))
 ])
 
-train_set = datasets.MNIST(root="../datasets/mnist",
+train_set = datasets.MNIST(root="../../datasets/mnist",
                            train=True,
                            transform=trans,  # 原始是 PIL Image 格式
                            download=True)
-test_set = datasets.MNIST(root="../datasets/mnist",
+test_set = datasets.MNIST(root="../../datasets/mnist",
                           train=False,
                           transform=trans,
                           download=True)

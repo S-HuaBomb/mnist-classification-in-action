@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader, Dataset
 
 class DiabetesDataset(Dataset):
     def __init__(self):
-        xy = np.loadtxt("./datasets/diabetes/diabetes.csv.gz", delimiter=',', dtype=np.float32)
+        xy = np.loadtxt("../../datasets/diabetes/diabetes.csv.gz", delimiter=',', dtype=np.float32)
         self.len = xy.shape[0]
         self.x_data = torch.from_numpy(xy[:, :-1])
         self.y_data = torch.from_numpy(xy[:, [-1]])
@@ -45,10 +45,10 @@ class Model(nn.Module):
 model = Model()
 
 criterion = nn.BCELoss()  # 二分类问题损失函数
-optimizer = optim.AdamW(model.parameters(), lr=0.003)
+optimizer = optim.Adam(model.parameters())
 
 if __name__ == '__main__':
-    for epoch in range(50):
+    for epoch in range(5):
         TP = 0
         loss_lst = []
         for i, (x, y) in enumerate(data_loader):
@@ -56,14 +56,16 @@ if __name__ == '__main__':
             loss = criterion(y_pred, y)
 
             loss_lst.append(loss.item())
-            y_hat = copy.copy(y_pred.data.numpy())
-            y_hat[y_hat >= 0.5] = 1.0
-            y_hat[y_hat < 0.5] = 0.0
-            TP += np.sum(y.data.numpy().flatten() == y_hat.flatten())
+            # y_hat = copy.copy(y_pred.data.numpy())
+            # y_hat[y_hat >= 0.5] = 1.0
+            # y_hat[y_hat < 0.5] = 0.0
+            # TP += np.sum(y.data.numpy().flatten() == y_hat.flatten())
+            y_hat = torch.round(y_pred.data)  # 取每个元素的最接近的整数，注：0.5接近0
+            TP += (y.data.flatten() == y_hat.flatten()).sum()  # 这里不能用 numpy.sum(), torch.sum()可以
 
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
-        acc = TP / len(dataset)
+        acc = TP.numpy() / len(dataset)
         print("epoch:", epoch, "loss:", np.mean(loss_lst), "acc:", acc, "TP:", TP)
