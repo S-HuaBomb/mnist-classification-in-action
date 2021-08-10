@@ -5,7 +5,7 @@ print("当前运行路径: ", os.getcwd())
 import numpy as np
 import torch
 from torch import nn, optim
-
+import visdom
 import matplotlib.pyplot as plt
 
 from utils.datasets import mnist, cifar10
@@ -21,11 +21,20 @@ class TrainTest:
         self.train_loader, self.test_loader = \
             mnist(batch_size=64) if dataset.lower() == "mnist" else cifar10(batch_size=64)
 
-    def train(self, epochs=10, optimize="Adam", save=True, save_dst="./models", save_name="resnet"):
+    def train(self,
+              epochs=10,
+              optimize="Adam",
+              save=True,
+              save_dst="./models",
+              save_name="resnet",
+              visloss=False):
         global acc
+        if visloss:
+            vis = visdom.Visdom()  # 用 visdom 实时可视化loss曲线
+            counter = 1
+            print("visdom实时可视化loss已开启, 使用: python -m visdom.server")
 
         criterion = nn.CrossEntropyLoss()  # 包含了 softmax 层
-
         if optimize.lower() == "adam":
             optimizer = optim.Adam(self.model.parameters())
         else:
@@ -51,13 +60,21 @@ class TrainTest:
                 loss = criterion(y_pred, labels)
                 loss_lst.append(loss.item())
 
-                TP += torch.sum(labels.flatten() == torch.argmax(y_pred.data, dim=1))
+                if self.device != 'cpu':
+                    TP += torch.sum((labels.flatten() == torch.argmax(y_pred.data, dim=1))).cpu().numpy()
+                else:
+                    TP += torch.sum((labels.flatten() == torch.argmax(y_pred.data, dim=1))).numpy()
+                # visdom 实时绘制 loss 曲线
+                if i % 50 == 49 and visloss:
+                    vis.line(Y=[np.mean(loss_lst[i-49:])], X=[counter*50], win='loss', update='append')
+                    vis.line(Y=[TP/total], X=[counter*50], win='acc', update='append')
+                    counter += 1
 
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
 
-            TP = TP.cpu().data.numpy() if self.device != "cpu" else TP.data.numpy()
+            # TP = TP.cpu().data.numpy() if self.device != "cpu" else TP.numpy()
             acc = TP / total
             acc_lst.append(acc)
             loss_lst_.extend(loss_lst)
