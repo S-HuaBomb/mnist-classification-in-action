@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
     # train_test.train(epochs=8, optimize="Adam", save=True, save_dst="./models", save_name="resnet")
 
-    load_dst = "./models/resnet_adam_acc_1.0.pth"
+    load_dst = "./models/resnet_adam_acc_0.96.pth"
     train_test.test(load_dst=load_dst)
     train_test.draw(load_dst=load_dst)
 

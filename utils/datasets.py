@@ -5,8 +5,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 from torchvision.utils import make_grid
 
-
-data_root = r"pytorch_src/mnist-classification-in-action/datasets"
+data_root = os.path.abspath(os.path.dirname(__file__))
 
 data_transforms = {
     'mnist': transforms.Compose([
@@ -22,6 +21,7 @@ data_transforms = {
     ])
 }
 
+
 def mnist(batch_size=64):
     """
     img: torch.Size([1, 1, 28, 28])
@@ -32,13 +32,13 @@ def mnist(batch_size=64):
     """
 
     train_set = datasets.MNIST(root=os.path.join(data_root, "mnist"),
-                                train=True,
-                                transform=data_transforms["mnist"],  # 原始是 PIL Image 格式
-                                download=True)
-    test_set = datasets.MNIST(root=os.path.join(data_root, "mnist"),
-                               train=False,
-                               transform=data_transforms["mnist"],
+                               train=True,
+                               transform=data_transforms["mnist"],  # 原始是 PIL Image 格式
                                download=True)
+    test_set = datasets.MNIST(root=os.path.join(data_root, "mnist"),
+                              train=False,
+                              transform=data_transforms["mnist"],
+                              download=True)
 
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
     test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=True)
@@ -70,7 +70,7 @@ def cifar10(batch_size=64):
     test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=True)
 
     classes = np.asarray(('plane', 'car', 'bird', 'cat',
-               'deer', 'dog', 'frog', 'horse', 'ship', 'truck'))
+                          'deer', 'dog', 'frog', 'horse', 'ship', 'truck'))
 
     return train_loader, test_loader, classes
 

@@ -41,9 +41,9 @@ if __name__ == '__main__':
     # print(param1.size())
 
     from networks.google_net import model as google
-    from networks.res_netv2 import model as resnetv2
-    from networks.res_net_bo import model as resnetbo
-    from networks.dence_net import model as densenet
+    from networks.resnet_v2 import model as resnetv2
+    from networks.resnet_bo import model as resnetbo
+    from networks.dense_net import model as densenet
 
     v2params = count_parameters(resnetv2)
     boparams = count_parameters(resnetbo)
